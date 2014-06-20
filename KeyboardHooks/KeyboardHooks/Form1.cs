@@ -99,9 +99,13 @@
                     if (upTime.Subtract(downTime).TotalMilliseconds <= timeout)
                     {
                         Log("within timeout");
-                        // TODO send Esc 
                         InputSimulator.SimulateKeyUp(VirtualKeyCode.CONTROL);
-                        SendKeys.Send("{ESC}");
+                        // SendKeys does not fork for me on polish Windows so I changed it to InputSimulator (this works for both PL and EN Windows)
+                        ////SendKeys.Flush();
+                        ////SendKeys.Send("{ESC}");
+                        ////SendKeys.SendWait("{ESC}");
+                        InputSimulator.SimulateKeyPress(VirtualKeyCode.ESCAPE);
+
                         ////SendKeys.Send("a");
                         ////new Thread(() =>
                         ////{
