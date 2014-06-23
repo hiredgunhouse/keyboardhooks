@@ -54,7 +54,7 @@
       <HintPath>..\lib\InputSimulator.dll</HintPath>
     </Reference>
     <Reference Include="MouseKeyboardActivityMonitor">
-      <HintPath>..\lib\MouseKeyboardActivityMonitor\x64\MouseKeyboardActivityMonitor.dll</HintPath>
+      <HintPath>..\lib\MouseKeyboardActivityMonitor\MouseKeyboardActivityMonitor.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
