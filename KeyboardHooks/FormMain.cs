@@ -28,7 +28,7 @@
             this.HideForm();
         }
 
-        private void HideForm()
+        public void HideForm()
         {
             this.Visible = false;
             this.ShowInTaskbar = false;
@@ -44,13 +44,18 @@
             this.Activate();
         }
 
-        public FormMain(bool enable)
+        public FormMain(bool enable = false, bool hide = false)
         {
             InitializeComponent();
 
             if (enable)
             {
                 this.btnEnable_Click(this, new EventArgs());
+            }
+
+            if (hide)
+            {
+                this.HideForm();
             }
         }
 
@@ -157,7 +162,6 @@
                 Disable();
                 btnEnable.Text = "Enable";
             }
-
         }
 
         private void Enable()
