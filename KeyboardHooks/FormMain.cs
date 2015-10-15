@@ -62,12 +62,14 @@
         private void ListenerOnKeyDown(object sender, KeyEventArgs keyEventArgs)
         {
             var mk = ModifierKeys;
-            Log(string.Format("KeyDown - key code: {0}, Modifiers: {1}, ModifierKeys: {2}", keyEventArgs.KeyCode, keyEventArgs.Modifiers, mk));
+            Log(string.Format("ListenerOnKeyDown(): KeyDown - key code: {0}, Modifiers: {1}, ModifierKeys: {2}", keyEventArgs.KeyCode, keyEventArgs.Modifiers, mk));
 
             if (keyEventArgs.KeyCode == Keys.LControlKey)
             {
+                Log("ListenerOnKeyDown(): KeyCode == LControlKey");
                 if (mk == Keys.Control)
                 {
+                    Log("ListenerOnKeyDown(): ModifierKeys == Control");
                     DoControlDown();
                 }
             }
@@ -79,7 +81,7 @@
 
         private void ListenerOnKeyUp(object sender, KeyEventArgs keyEventArgs)
         {
-            Log(string.Format("KeyUp - key code: {0}, Modifiers: {1}", keyEventArgs.KeyCode, keyEventArgs.Modifiers));
+            Log(string.Format("ListenerOnKeyUp(): KeyUp - key code: {0}, Modifiers: {1}", keyEventArgs.KeyCode, keyEventArgs.Modifiers));
 
             if (keyEventArgs.KeyCode == Keys.LControlKey)
             {
@@ -102,32 +104,37 @@
 
         private void DoOtherDown(KeyEventArgs keyEventArgs)
         {
-            Log(string.Format("DoOtherDown() - {0}", keyEventArgs.KeyCode));
+            Log(string.Format("DoOtherDown(): KeyCode - {0}", keyEventArgs.KeyCode));
 
             justControl = false;
         }
 
         private void DoControlUp()
         {
+            Log("DoControlUp()");
+
             if (isDown)
             {
-                Log("DoControlUp()");
+                Log("DoControlUp(): isDown == true");
 
                 isDown = false;
+
                 if (justControl)
                 {
-                    Log("justControl");
+                    Log("DoControlUp(): justControl == true");
 
                     var upTime = DateTime.Now;
                     if (upTime.Subtract(downTime).TotalMilliseconds <= timeout)
                     {
-                        Log("within timeout");
+                        Log("DoControlUp(): within timeout");
 
+                        Log("DoControlUp(): simulating KeyUp(CONTROL)");
                         InputSimulator.SimulateKeyUp(VirtualKeyCode.CONTROL);
                         // SendKeys does not fork for me on polish Windows so I changed it to InputSimulator (this works for both PL and EN Windows)
                         ////SendKeys.Flush();
                         ////SendKeys.Send("{ESC}");
                         ////SendKeys.SendWait("{ESC}");
+                        Log("DoControlUp(): simulating KeyPress(ESCAPE)");
                         InputSimulator.SimulateKeyPress(VirtualKeyCode.ESCAPE);
 
                         ////SendKeys.Send("a");

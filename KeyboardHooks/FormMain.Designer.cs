@@ -50,7 +50,7 @@
             this.lbText.FormattingEnabled = true;
             this.lbText.Location = new System.Drawing.Point(12, 34);
             this.lbText.Name = "lbText";
-            this.lbText.Size = new System.Drawing.Size(418, 719);
+            this.lbText.Size = new System.Drawing.Size(532, 719);
             this.lbText.TabIndex = 0;
             // 
             // btnEnable
@@ -66,7 +66,7 @@
             // button1
             // 
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Location = new System.Drawing.Point(355, 5);
+            this.button1.Location = new System.Drawing.Point(469, 5);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 2;
@@ -124,7 +124,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(442, 757);
+            this.ClientSize = new System.Drawing.Size(556, 757);
             this.Controls.Add(this.chkLogKeystrokes);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.btnEnable);
