@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-
-namespace KeyboardHooks
+﻿namespace KeyboardHooks
 {
+    using System;
+    using System.Windows.Forms;
+
     static class Program
     {
         /// <summary>
@@ -16,19 +13,23 @@ namespace KeyboardHooks
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            FormMain form;
-            if (args.Length > 0 && args[0].ToUpper() == "/ENABLE")
+
+            var autoEnable = false;
+            var autoHide = false;
+            foreach (var arg in args)
             {
-                form = new FormMain(true);
-            }
-            else
-            {
-                form = new FormMain();
+                switch (arg.ToLower())
+                {
+                    case "/enable":
+                        autoEnable = true;
+                        break;
+                    case "/hide":
+                        autoHide = true;
+                        break;
+                }
             }
 
-            form.Hide();
-
-            Application.Run(form);
+            Application.Run(new FormMain(enable: autoEnable, hide: autoHide));
         }
     }
 }
