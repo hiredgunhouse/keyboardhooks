@@ -1,6 +1,8 @@
 Keyboard Hooks
 ==============
 
+[![Build status](https://ci.appveyor.com/api/projects/status/45cdyx00o17pufu1?svg=true)](https://ci.appveyor.com/project/PiotrOwsiak/keyboardhooks)
+
 This program changes Ctrl to act as either Ctrl (when pressed in combination with other key) or Esc (when pressed and release).
 Additionally when Ctrl is pressed and released after specified, configurable timeout no key is sent.
 
