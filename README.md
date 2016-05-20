@@ -19,6 +19,7 @@ Pull requests are welcomed.
 
 ###Known problems:  
 ~~Does not work on Windows 7 PL 64-bit (tested on a single machine)~~
+Does not seem to work on Windows 10
 
 ###TODO:
 - ~~icon~~
