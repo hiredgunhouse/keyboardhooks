@@ -1,9 +1,7 @@
 ﻿namespace KeyboardHooks
 {
     using System;
-    using System.Collections;
     using System.Configuration;
-    using System.Threading;
     using System.Windows.Forms;
 
     using MouseKeyboardActivityMonitor;
@@ -13,12 +11,19 @@
 
     public partial class FormMain : Form
     {
-        private static int timeout;
-        private static bool isDown;
-        private static bool justControl;
-        private static DateTime downTime;
+        private static int _timeout;
+        private static bool _isDown;
+        private static bool _justControl;
+        private static DateTime _downTime;
 
-        private KeyboardHookListener listener;
+        private KeyboardHookListener _listener;
+
+        private readonly string _osVersion;
+
+        // see here https://msdn.microsoft.com/library/windows/desktop/ms724832.aspx7 for version numbers
+        ////private const string Windows10 = "10.0";
+        private const string Windows10 = "6.2"; // for application not specifically targeted for Windows 8 or 10
+        private const string Windows7 = "6.1";
 
         public bool AllowClosing { get; set; }
 
@@ -57,20 +62,45 @@
             {
                 this.HideForm();
             }
+
+            var version = Environment.OSVersion.Version;
+            _osVersion = $"{version.Major}.{version.Minor}";
         }
 
         private void ListenerOnKeyDown(object sender, KeyEventArgs keyEventArgs)
         {
             var mk = ModifierKeys;
-            Log(string.Format("ListenerOnKeyDown(): KeyDown - key code: {0}, Modifiers: {1}, ModifierKeys: {2}", keyEventArgs.KeyCode, keyEventArgs.Modifiers, mk));
+            Log( $"ListenerOnKeyDown(): KeyDown - key code: {keyEventArgs.KeyCode}, Modifiers: {keyEventArgs.Modifiers}, ModifierKeys: {mk}");
 
             if (keyEventArgs.KeyCode == Keys.LControlKey)
             {
                 Log("ListenerOnKeyDown(): KeyCode == LControlKey");
-                if (mk == Keys.Control)
+
+                Log($"ListenerOnKeyDown(): _osVersion == {_osVersion}");
+                switch (_osVersion)
                 {
-                    Log("ListenerOnKeyDown(): ModifierKeys == Control");
-                    DoControlDown();
+                    // for Windows 10
+                    case Windows10:
+                        DoControlDown();
+                        break;
+
+                    // for Windows 8
+                    ////case WINDOWS_8:
+                    ////    // TODO
+                    ////    break;
+
+                    // for Windows 7 
+                    // and others we will use the default behavior
+                    // TODO: test on Windows 8 and see what the major number for it is
+                    // for now I"m just interrested in making it work on Windows 7 and Windows 10 (I don't use Windows 8 and can't even test it on it)
+                    case Windows7:
+                    default:
+                        if (mk == Keys.Control)
+                        {
+                            Log("ListenerOnKeyDown(): ModifierKeys == Control");
+                            DoControlDown();
+                        }
+                        break;
                 }
             }
             else
@@ -81,7 +111,7 @@
 
         private void ListenerOnKeyUp(object sender, KeyEventArgs keyEventArgs)
         {
-            Log(string.Format("ListenerOnKeyUp(): KeyUp - key code: {0}, Modifiers: {1}", keyEventArgs.KeyCode, keyEventArgs.Modifiers));
+            Log($"ListenerOnKeyUp(): KeyUp - key code: {keyEventArgs.KeyCode}, Modifiers: {keyEventArgs.Modifiers}");
 
             if (keyEventArgs.KeyCode == Keys.LControlKey)
             {
@@ -93,38 +123,42 @@
         {
             Log("DoControlDown()");
 
-            if (!isDown)
+            if (!_isDown)
             {
-                Log("!isDown");
-                isDown = true;
-                justControl = true;
-                downTime = DateTime.Now;
+                Log("DoControlDown(): !isDown");
+                _isDown = true;
+                _justControl = true;
+                _downTime = DateTime.Now;
+            }
+            else
+            {
+                Log("DoControlDown(): isDown");
             }
         }
 
         private void DoOtherDown(KeyEventArgs keyEventArgs)
         {
-            Log(string.Format("DoOtherDown(): KeyCode - {0}", keyEventArgs.KeyCode));
+            Log($"DoOtherDown(): KeyCode - {keyEventArgs.KeyCode}");
 
-            justControl = false;
+            _justControl = false;
         }
 
         private void DoControlUp()
         {
             Log("DoControlUp()");
 
-            if (isDown)
+            if (_isDown)
             {
                 Log("DoControlUp(): isDown == true");
 
-                isDown = false;
+                _isDown = false;
 
-                if (justControl)
+                if (_justControl)
                 {
                     Log("DoControlUp(): justControl == true");
 
                     var upTime = DateTime.Now;
-                    if (upTime.Subtract(downTime).TotalMilliseconds <= timeout)
+                    if (upTime.Subtract(_downTime).TotalMilliseconds <= _timeout)
                     {
                         Log("DoControlUp(): within timeout");
 
@@ -145,7 +179,19 @@
                         ////})
                         ////.Start();
                     }
+                    else
+                    {
+                        Log("DoControlUp(): past timeout");
+                    }
                 }
+                else
+                {
+                    Log("DoControlUp(): Not justControl");
+                }
+            }
+            else
+            {
+                Log("DoControlUp(): Not isDown");
             }
         }
 
@@ -173,23 +219,23 @@
 
         private void Enable()
         {
-            if (listener == null)
+            if (_listener == null)
             {
-                timeout = Convert.ToInt32(ConfigurationManager.AppSettings["Timeout"]);
-                listener = new MouseKeyboardActivityMonitor.KeyboardHookListener(new GlobalHooker());
-                listener.KeyDown += ListenerOnKeyDown;
-                listener.KeyUp += ListenerOnKeyUp;
-                listener.Enabled = true;
+                _timeout = Convert.ToInt32(ConfigurationManager.AppSettings["Timeout"]);
+                _listener = new MouseKeyboardActivityMonitor.KeyboardHookListener(new GlobalHooker());
+                _listener.KeyDown += ListenerOnKeyDown;
+                _listener.KeyUp += ListenerOnKeyUp;
+                _listener.Enabled = true;
             }
             else
             {
-                listener.Stop();
+                _listener.Stop();
             }
         }
 
         private void Disable()
         {
-            listener.Stop();
+            _listener.Stop();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -204,7 +250,7 @@
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (! AllowClosing)
+            if (!AllowClosing)
             {
                 e.Cancel = true;
                 this.HideForm();
